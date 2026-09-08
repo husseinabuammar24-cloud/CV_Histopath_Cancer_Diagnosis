@@ -4,6 +4,7 @@ Explainable Deep Learning for Automated Quantitative Analysis of Histopathology 
 source 
 https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/?utm_source=chatgpt.com
 
+-----------------------
 
 the BreaKHis dataset (https://www.kaggle.com/datasets/waseemalastal/breakhis-breast-cancer-histopathological-dataset/data)
 
@@ -28,3 +29,13 @@ What are the magnifications?
 
 What are the image dimensions?
 224 × 224
+
+----------------------------------
+
+Work flow:
+
+Download dataset
+      |
+Data exploration
+      |
+contant_analysis (split)
