@@ -32,10 +32,32 @@ What are the image dimensions?
 
 ----------------------------------
 
-Work flow:
 
-Download dataset
-      |
+Dataset
+   ↓
 Data exploration
-      |
-contant_analysis (split)
+   ↓
+Case-level splitting        ← WE ARE HERE / COMPLETE
+   ↓
+Image preprocessing
+   ↓
+Data augmentation
+   ↓
+CNN / Transfer Learning
+   ↓
+Hyperparameter tuning
+   ↓
+Final model
+   ↓
+Test evaluation
+   ↓
+Confusion Matrix
+ROC-AUC
+Precision / Recall / F1
+   ↓
+Explainability
+Grad-CAM / feature maps
+   ↓
+Optional CNN comparison
+   ↓
+GitHub + README
