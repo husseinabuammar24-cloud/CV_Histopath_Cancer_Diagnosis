@@ -1,36 +1,47 @@
-# Histopathology_Cancer_Diagnosis
+# 🔬 Histopathology Cancer Diagnosis
 
 ## Explainable Deep Learning for Automated Quantitative Analysis of Histopathology Images for Cancer Diagnosis
+
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange?logo=tensorflow&logoColor=white)
+![Keras](https://img.shields.io/badge/Keras-Latest-red?logo=keras&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+
+A deep-learning computer vision project for binary classification of breast histopathology images as **benign** or **malignant** using the **BreaKHis** dataset and **MobileNetV2 transfer learning**.
+
+> ⚠️ **Important:** This project is intended for educational and research purposes only. It is **not a clinically validated diagnostic system** and must not be used for independent medical diagnosis.
 
 ---
 
 ## 📌 Project Overview
 
-This project develops a deep-learning computer vision system for the automated classification of breast histopathology images into **benign** and **malignant** categories.
-
-The project uses the **BreaKHis (Breast Cancer Histopathological Image Classification)** dataset and applies **MobileNetV2 transfer learning** to perform binary breast cancer classification.
-
-The original computer vision challenge was:
-
-> **Design a CNN capable of recognizing pneumonia in X-rays of patients.**
-
-For this project, the same computer vision methodology has been adapted to a different medical-imaging problem:
+The original computer-vision challenge was to design a CNN capable of recognizing pneumonia in X-ray images. This project adapts the same methodology to a different medical-imaging problem:
 
 > **Design and evaluate a CNN capable of recognizing malignant and benign breast histopathology images.**
 
-The main objectives are to:
+### Objectives
 
-* Train a CNN capable of recognizing previously unseen histopathology images.
-* Apply a rigorous training, validation and testing methodology.
-* Use transfer learning with a pretrained CNN.
-* Perform hyperparameter and fine-tuning experiments.
-* Evaluate the final model using multiple classification metrics.
-* Generate clearly labeled visualizations.
-* Analyze false positives and false negatives.
-* Discuss the importance of different evaluation metrics in a medical environment.
-* Explore explainability and future feature-map visualization.
+- Train a CNN capable of recognizing previously unseen histopathology images.
+- Apply rigorous training, validation, and testing methodology.
+- Use transfer learning with a pretrained CNN.
+- Perform hyperparameter and fine-tuning experiments.
+- Address class imbalance using class weighting.
+- Evaluate the final model using multiple classification metrics.
+- Generate training and evaluation visualizations.
+- Analyze false positives and false negatives.
+- Explore explainability and future feature-map visualization.
+- Demonstrate why leakage prevention and careful test-set discipline are important in medical machine learning.
 
-> **Important:** This project is intended for educational and research purposes. It is not a clinically validated diagnostic system.
+### Key Features
+
+- ✨ **Transfer Learning** — MobileNetV2 pretrained on ImageNet
+- 🎯 **Binary Classification** — Benign vs. Malignant
+- 🔒 **Group-Level Splitting** — Prevents related cases/slides from appearing across different splits
+- ⚖️ **Class Weighting** — Compensates for class imbalance
+- 📈 **Comprehensive Evaluation** — Accuracy, Precision, Recall, F1-score, ROC-AUC, PR curve, and confusion matrix
+- 🔍 **Error Analysis** — Visual investigation of false positives and false negatives
+- 💡 **Explainability Focus** — Foundation for feature-map and Grad-CAM analysis
 
 ---
 
@@ -38,439 +49,331 @@ The main objectives are to:
 
 ## BreaKHis — Breast Cancer Histopathological Image Classification
 
-The project uses the **BreaKHis** dataset, a publicly available collection of breast histopathology images.
+The project uses the **BreaKHis** dataset, a publicly available collection of breast histopathology images developed in collaboration with the **P&D Laboratory – Pathological Anatomy and Cytopathology, Paraná, Brazil**.
 
-The original BreaKHis database was developed in collaboration with the **P&D Laboratory – Pathological Anatomy and Cytopathology, Paraná, Brazil** and is made available for research purposes.
+### Dataset Statistics
 
-### Official BreaKHis database
+| Metric | Value |
+|---|---:|
+| Total images | **7,909** |
+| Benign images | **2,480** |
+| Malignant images | **5,429** |
+| Patients | **82** |
+| Magnifications | **40X, 100X, 200X, 400X** |
+| Image representation | **224 × 224 × 3 RGB** |
 
-The official database and dataset information can be found here:
+The project uses the 7,909-image BreaKHis 1.0 set. The broader BreaKHis database is reported as containing 9,109 images, while the publicly downloadable set used here contains 7,909 images.
 
-[BreaKHis — Official UFPR Database](https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/?utm_source=chatgpt.com)
+### Data Sources
 
-### Kaggle dataset
-
-The dataset used for this project was obtained from Kaggle:
-
-[BreaKHis — Kaggle Dataset](https://www.kaggle.com/datasets/waseemalastal/breakhis-breast-cancer-histopathological-dataset?utm_source=chatgpt.com)
-
-The Kaggle version provides the BreaKHis dataset with both binary and multi-class labels and includes images at 40X, 100X, 200X and 400X magnifications.
-
----
-
-# 🔎 Dataset Inspection
-
-The first step of the project was to download the dataset and inspect its folder structure and metadata.
-
-The following characteristics were investigated:
-
-* Number of images
-* Number of patients
-* Binary classification categories
-* Histological subtypes
-* Magnification levels
-* Image dimensions
-* Slide/case identifiers
-* Potential data leakage between train, validation and test sets
+- **Official BreaKHis database:**  
+  https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/
+- **Kaggle dataset:**  
+  https://www.kaggle.com/datasets/waseemalastal/breakhis-breast-cancer-histopathological-dataset
 
 ---
 
-## How many images?
+## 🧬 Benign vs. Malignant
 
-The publicly downloadable BreaKHis dataset used in this project contains:
+This project performs **binary classification**:
 
-### **7,909 images**
+| Class | Label |
+|---|---:|
+| Benign | **0** |
+| Malignant | **1** |
 
-The official BreaKHis page reports:
+The model produces a single probability representing the likelihood that an image belongs to the malignant class.
 
-| Category  | Number of images |
-| --------- | ---------------: |
-| Benign    |            2,480 |
-| Malignant |            5,429 |
-| **Total** |        **7,909** |
+### Histological Subtypes
 
-The official page describes the broader database as containing 9,109 images, while the BreaKHis 1.0 publicly available/downloadable set contains 7,909 images.
+Although the model performs binary classification, BreaKHis contains eight histological types.
 
-For this project, the relevant dataset is therefore:
-
-> **7,909 images**
-
----
-
-## How many patients?
-
-The dataset contains images collected from:
-
-### **82 patients**
-
-Patient/case information is important because images from the same patient or slide can be visually related.
-
-For this reason, this project does not simply perform a random image-level split.
-
-Instead, a **group-level split** is used to reduce the risk of data leakage.
-
----
-
-# 🧬 Benign vs Malignant
-
-The main objective of this project is **binary classification**.
-
-There are two classes:
-
-| Class     | Label |
-| --------- | ----: |
-| Benign    |     0 |
-| Malignant |     1 |
-
-The model therefore produces a single probability indicating how likely an image is to belong to the malignant class.
-
-The original BreaKHis dataset contains 2,480 benign images and 5,429 malignant images.
-
----
-
-# 🔬 Histological Subtypes
-
-Although this project performs **binary classification**, the BreaKHis dataset contains eight histological tumor types.
-
-## Benign
+**Benign**
 
 1. Adenosis
 2. Fibroadenoma
 3. Phyllodes Tumor
 4. Tubular Adenoma
 
-## Malignant
+**Malignant**
 
 5. Ductal Carcinoma
 6. Lobular Carcinoma
 7. Mucinous Carcinoma
 8. Papillary Carcinoma
 
-The official BreaKHis documentation identifies four benign and four malignant histological types.
-
-The current project combines these eight subtypes into two diagnostic categories:
-
-```text
-                         BreaKHis
-                            │
-              ┌─────────────┴─────────────┐
-              │                           │
-           Benign                      Malignant
-              │                           │
-       ┌──────┼──────┐             ┌──────┼──────┐
-       │      │      │             │      │      │
-    Adenosis Fibro- Phyllodes    Ductal  Lobular Mucinous
-             adenoma Tumor       Carcinoma Carcinoma Carcinoma
-              │                           │
-        Tubular Adenoma             Papillary Carcinoma
-```
-
 A future extension could investigate the more difficult **eight-class classification problem**.
 
 ---
 
-# 🔬 Magnification Levels
+## 🔬 Magnification Levels
 
-BreaKHis images are available at four magnification levels:
+BreaKHis images are available at four magnifications:
 
-* **40X**
-* **100X**
-* **200X**
-* **400X**
+- **40X**
+- **100X**
+- **200X**
+- **400X**
 
-These magnifications provide different levels of histological information.
-
-The distribution in the official BreaKHis 1.0 dataset is:
-
-| Magnification |    Benign | Malignant |     Total |
-| ------------- | --------: | --------: | --------: |
-| 40X           |       652 |     1,370 |     1,995 |
-| 100X          |       644 |     1,437 |     2,081 |
-| 200X          |       623 |     1,390 |     2,013 |
-| 400X          |       588 |     1,232 |     1,820 |
-| **Total**     | **2,480** | **5,429** | **7,909** |
+| Magnification | Benign | Malignant | Total |
+|---|---:|---:|---:|
+| 40X | 652 | 1,370 | 1,995 |
+| 100X | 644 | 1,437 | 2,081 |
+| 200X | 623 | 1,390 | 2,013 |
+| 400X | 588 | 1,232 | 1,820 |
+| **Total** | **2,480** | **5,429** | **7,909** |
 
 ---
 
-# 🖼️ Image Dimensions
+# 🔒 Dataset Split and Leakage Prevention
 
-The image dimensions used by this project are:
+Histopathology datasets can contain multiple images originating from the same underlying case or slide. Randomly splitting images can therefore cause **data leakage**, where visually related images appear in both training and evaluation sets.
 
-### **224 × 224 pixels**
+This project uses a **group-level split** based on the case/slide identifier derived from the image metadata.
 
-The model receives images as:
+### Final Split
+
+| Split | Images |
+|---|---:|
+| Training | **5,303** |
+| Validation | **1,120** |
+| Testing | **1,486** |
+| **Total** | **7,909** |
+
+All images belonging to the same group are assigned to exactly one split.
+
+### Leakage Checks
+
+- Train/validation group overlap: **0**
+- Train/test group overlap: **0**
+- Validation/test group overlap: **0**
+
+This is an important methodological strength because it makes validation and test performance a more meaningful estimate of generalization.
+
+The reproducible split is stored in:
 
 ```text
-224 × 224 × 3
+data/processed/breakhis_split.csv
 ```
 
-where:
-
-* 224 = image height
-* 224 = image width
-* 3 = RGB channels
-
-The Kaggle version of the BreaKHis dataset also describes its images as resized to **224×224 pixels**.
-
-This resolution is suitable for the MobileNetV2 architecture used in this project.
-
-### Model input pipeline
-
-```text
-Input image
-     │
-     ▼
-224 × 224 × 3
-     │
-     ▼
-MobileNetV2 preprocessing
-     │
-     ▼
-Approximately [-1, 1]
-     │
-     ▼
-MobileNetV2
-```
-
-> **Important:** The `224 × 224` dimension refers to the image representation used by this project/model pipeline.
-
----
-
-# 📁 Dataset Split
-
-The final dataset split used in the project is:
-
-| Split      |    Images |
-| ---------- | --------: |
-| Training   |     5,303 |
-| Validation |     1,120 |
-| Testing    |     1,486 |
-| **Total**  | **7,909** |
-
-The split is performed at the **group/case level**.
-
-This means that images belonging to the same underlying group are kept within the same split.
-
-The project verifies that there is no overlap between the groups assigned to:
-
-* training
-* validation
-* testing
-
-This reduces the risk of data leakage and provides a more realistic evaluation of model generalization.
+The split uses `random_state=42`.
 
 ---
 
 # ⚙️ Preprocessing
 
-The original challenge suggested performing preprocessing using OpenCV.
+The original challenge suggested OpenCV preprocessing. This project instead uses **TensorFlow/Keras and PIL**, integrating the preprocessing directly with the MobileNetV2 workflow.
 
-For this project, preprocessing was implemented using **TensorFlow/Keras and PIL** instead of OpenCV.
+### Pipeline
 
-This choice was made because the selected MobileNetV2 architecture has a specific preprocessing function that integrates directly with the TensorFlow/Keras workflow.
+```text
+Input image
+     │
+     ▼
+Load image
+     │
+     ▼
+Convert to RGB
+     │
+     ▼
+Resize to 224 × 224
+     │
+     ▼
+MobileNetV2 preprocess_input
+     │
+     ▼
+Approximately [-1, 1]
+     │
+     ▼
+TensorFlow dataset
+     │
+     ▼
+Batching + Prefetching
+```
 
-The preprocessing pipeline consists of:
+### Important: Model Input vs. Visualization
 
-1. Load the image.
-2. Convert the image to RGB.
-3. Resize the image to 224×224.
-4. Apply MobileNetV2 `preprocess_input`.
-5. Create TensorFlow datasets.
-6. Batch the images.
-7. Prefetch the data.
-
----
-
-## MobileNetV2 preprocessing
-
-The model receives image values approximately in:
+MobileNetV2 preprocessing converts image values to approximately:
 
 ```text
 [-1, 1]
 ```
 
-The `[0, 1]` representation is only used for displaying images in visualizations.
+The model receives these values during training, validation, and testing.
+
+For visualization only, the transformation is approximately reversed:
+
+```python
+(image + 1) / 2
+```
+
+and clipped to `[0, 1]`.
 
 Therefore:
 
 ```text
-Model input:
-[-1, 1]
-
-Visualization:
-[0, 1]
+Model input:    [-1, 1]
+Visualization:  [0, 1]
 ```
 
-This distinction is important because the model is **not trained on `[0,1]` images**.
+The model is **not trained on `[0, 1]` images**.
 
 ---
 
 # 🔄 Data Augmentation
 
-Data augmentation is applied **only to the training dataset**.
+Augmentation is applied **only to the training dataset**.
 
-The current augmentation pipeline includes:
+Current augmentation:
 
-* horizontal and vertical flipping
-* random rotation
-* random zoom
+- Horizontal flipping
+- Vertical flipping
+- Random rotation with `factor=0.5`
+- Random zoom of 10%
 
-The validation and test datasets are not augmented.
+Validation and test images remain unaugmented.
 
-This ensures that validation and test performance represents the model's performance on the actual evaluation data.
+> **Note:** The rotation factor is relatively large. It was preserved as part of the recorded experiment rather than silently changed during code cleanup. Changing augmentation strength should be treated as a new experiment.
 
 ---
 
 # 🧠 Model Architecture
 
-## MobileNetV2
+## MobileNetV2 Transfer Learning
 
-The main CNN architecture used in this project is **MobileNetV2 pretrained on ImageNet**.
+The project uses **MobileNetV2 pretrained on ImageNet** as the feature extractor.
 
-The original classification head is removed and replaced with a binary classification head.
-
-The architecture is:
+The original classification head is replaced with a small binary classification head:
 
 ```text
-Input
+Input Image
 224 × 224 × 3
-       │
-       ▼
+      │
+      ▼
 MobileNetV2
 ImageNet pretrained
-       │
-       ▼
+      │
+      ▼
 Global Average Pooling
-       │
-       ▼
-Dropout
-0.5
-       │
-       ▼
-Dense
-1 neuron
-       │
-       ▼
+      │
+      ▼
+Dropout(0.5)
+      │
+      ▼
+Dense(1)
+      │
+      ▼
 Sigmoid
-       │
-       ▼
-Benign / Malignant
+      │
+      ▼
+P(Malignant)
 ```
+
+The sigmoid output is appropriate for the two-class problem, where malignant is represented as class `1`.
 
 ---
 
-# 🔁 Transfer Learning
+# 🔁 Transfer Learning and Fine-Tuning
 
-The project uses a transfer-learning workflow.
+The training workflow consists of two stages.
 
-Initially, the pretrained MobileNetV2 base is frozen and only the newly added classification layers are trained.
+### Stage 1 — Frozen Baseline
 
-After establishing a baseline, selected layers of the pretrained network are unfrozen for fine-tuning.
+- MobileNetV2 convolutional base is frozen.
+- Only the newly added classification head is trained.
+- Adam optimizer is used.
+- Binary cross-entropy is used as the loss.
+- Validation AUC is used for model comparison.
 
-Batch Normalization layers are kept frozen during fine-tuning for training stability.
+### Stage 2 — Fine-Tuning
 
-The workflow is:
+Selected layers of MobileNetV2 are unfrozen and fine-tuned.
 
-```text
-Pretrained MobileNetV2
-          │
-          ▼
-Freeze convolutional base
-          │
-          ▼
-Train new classification head
-          │
-          ▼
-Evaluate on validation set
-          │
-          ▼
-Unfreeze selected layers
-          │
-          ▼
-Fine-tune
-          │
-          ▼
-Evaluate validation performance
-          │
-          ▼
-Select final model
-          │
-          ▼
-Test once on test set
-```
-
----
-
-# 🎯 Training Configuration
-
-| Parameter             | Value                |
-| --------------------- | -------------------- |
-| Architecture          | MobileNetV2          |
-| Pretrained weights    | ImageNet             |
-| Input size            | 224×224×3            |
-| Batch size            | 32                   |
-| Optimizer             | Adam                 |
-| Loss                  | Binary Cross-Entropy |
-| Output                | 1 sigmoid neuron     |
-| Dropout               | 0.5                  |
-| Main selection metric | Validation AUC       |
-
----
-
-# 🧪 Hyperparameter Experiments
-
-Several configurations were tested.
-
-| Experiment                                        | Best Validation AUC |
-| ------------------------------------------------- | ------------------: |
-| Frozen MobileNetV2                                |             ~0.7003 |
-| 30-layer fine-tuning                              |             ~0.6246 |
-| 10-layer fine-tuning                              |              0.7006 |
-| Class-weighted + 15-layer fine-tuning             |              0.8002 |
-| Class-weighted + 30-layer fine-tuning             |              0.8112 |
-| **Class-weighted + 30-layer fine-tuning — final** |          **0.8208** |
-
-The final selected model is:
+Batch Normalization layers are kept frozen for training stability.
 
 ```text
-best_classweighted_30_finetune_layers.keras
-```
-
-The best validation AUC achieved was:
-
-```text
-0.8208
+ImageNet-pretrained MobileNetV2
+              │
+              ▼
+      Freeze base model
+              │
+              ▼
+   Train classification head
+              │
+              ▼
+      Evaluate validation
+              │
+              ▼
+   Unfreeze selected layers
+              │
+              ▼
+          Fine-tune
+              │
+              ▼
+      Evaluate validation
+              │
+              ▼
+      Select final model
+              │
+              ▼
+     Test once on test set
 ```
 
 ---
 
 # ⚖️ Class Weighting
 
-The final experiment uses class weighting to compensate for the imbalance between benign and malignant samples.
+The dataset is imbalanced, with more malignant than benign images.
 
-The approximate weights were:
+The strongest experiment uses approximately:
 
 ```text
-Benign:     1.6606
-Malignant:  0.7156
+Benign:      1.6606
+Malignant:   0.7156
 ```
 
-The final experiment combined:
+Class weighting changes the contribution of each class to the training loss.
 
-* class weighting
-* 30-layer fine-tuning
+The final experiment combines:
 
-This produced the best validation AUC.
+- **Class weighting**
+- **30-layer fine-tuning**
+- **Learning rate = 1e-4**
 
-Because both class weighting and the number of trainable layers were changed together, the result should be interpreted as the performance of the **combined configuration**, rather than evidence that class weighting alone caused the improvement.
+> ⚠️ Because class weighting and fine-tuning depth were changed together, the improvement cannot be attributed to class weighting alone. The reported result represents the **combined configuration**.
+
+---
+
+# 🧪 Hyperparameter Experiments
+
+Several configurations were evaluated using validation AUC.
+
+| Experiment | Best Validation AUC |
+|---|---:|
+| Frozen MobileNetV2, low LR (~1e-6) | ~0.567 |
+| Frozen MobileNetV2, LR 1e-4 | ~0.565 |
+| Frozen MobileNetV2, LR 0.001 | ~0.7003 |
+| 30-layer fine-tuning, no class weights | ~0.6246 |
+| 10-layer fine-tuning, no class weights | **0.7006** |
+| Class-weighted + 30-layer fine-tuning | ~0.8112 |
+| Class-weighted + 15-layer fine-tuning | **0.8002** |
+| Class-weighted + 30-layer fine-tuning rerun | **0.8208** |
+
+### Selected Model
+
+```text
+best_classweighted_30_finetune_layers.keras
+```
+
+**Best validation AUC: 0.8208**
+
+The selected model is the **class-weighted 30-layer fine-tuned MobileNetV2**.
 
 ---
 
 # 🧪 Evaluation Methodology
 
 The test set is kept completely separate from model selection.
-
-The workflow is:
 
 ```text
 Training Set
@@ -482,67 +385,60 @@ Train model
 Validation Set
      │
      ▼
-Hyperparameter tuning
+Hyperparameter experiments
      │
      ▼
-Select final model
+Select best model
      │
      ▼
-Test Set
+Held-out Test Set
      │
      ▼
 Final evaluation
 ```
 
-The test set is **not used to tune the model**.
+### Test-Set Discipline
 
-This is essential to avoid test-set leakage.
+- Training data is used to fit model parameters.
+- Validation data is used to compare experiments and select the model.
+- The test set is reserved for final evaluation.
+- The final test results must not be used to tune architecture, learning rate, class weights, or threshold.
 
----
-
-# 📈 Evaluation Metrics
-
-The final model is evaluated using:
-
-* Accuracy
-* Precision
-* Recall
-* F1-score
-* ROC-AUC
-* Confusion matrix
-* ROC curve
-* Precision-Recall curve
-* Training/validation curves
-* False-positive analysis
-* False-negative analysis
+This is particularly important for medical imaging, where repeatedly adapting a model based on test performance can effectively turn the test set into an indirect training resource.
 
 ---
 
 # 🏆 Final Test Results
 
-The selected model was evaluated on the previously unseen test set.
+The selected model was evaluated on **1,486 previously unseen test images**.
 
-| Metric              |     Result |
-| ------------------- | ---------: |
-| Accuracy            | **0.6743** |
+| Metric | Result |
+|---|---:|
+| Accuracy | **0.6743** |
 | Malignant Precision | **0.7860** |
-| Malignant Recall    | **0.6016** |
-| Malignant F1-score  | **0.6816** |
-| ROC-AUC             | **0.7622** |
+| Malignant Recall | **0.6016** |
+| Malignant F1-score | **0.6816** |
+| ROC-AUC | **0.7622** |
+
+### Validation vs. Test
+
+```text
+Validation AUC: 0.8208
+Test AUC:       0.7622
+Difference:     0.0586
+```
+
+The gap indicates that validation performance did not fully transfer to the held-out test set and should be considered when discussing model generalization.
 
 ---
 
 # 📊 Confusion Matrix
 
-The final confusion matrix is:
-
 ```text
-                    Predicted
-                  Benign  Malignant
-
-Actual Benign       484       141
-
-Actual Malignant    343       518
+                         Predicted
+                    Benign    Malignant
+Actual Benign         484        141
+Actual Malignant      343        518
 ```
 
 Therefore:
@@ -551,16 +447,14 @@ Therefore:
 True Negatives  = 484
 False Positives = 141
 False Negatives = 343
-True Positives   = 518
+True Positives  = 518
 ```
 
 ---
 
 # 🏥 Medical Interpretation
 
-Medical image classification requires more than simply measuring accuracy.
-
-Different types of errors have different consequences.
+Medical image classification should not be evaluated using accuracy alone because different types of errors can have different consequences.
 
 ## False Negatives
 
@@ -571,21 +465,17 @@ Actual:    Malignant
 Predicted: Benign
 ```
 
-The final model produced:
+The final model produced **343 false negatives**.
 
-**343 false negatives.**
-
-This is particularly important in a cancer-detection scenario because a malignant sample being classified as benign could potentially delay further investigation.
-
-Therefore, **malignant recall/sensitivity** is an important metric.
-
-The final malignant recall was:
+The malignant recall was:
 
 ```text
 0.6016
 ```
 
----
+This means the model identified approximately 60% of the malignant test images at the evaluation threshold, while a substantial number of malignant images were classified as benign.
+
+In a real diagnostic setting, missed malignant cases could be particularly consequential. Therefore, **malignant recall/sensitivity** deserves close attention.
 
 ## False Positives
 
@@ -596,72 +486,36 @@ Actual:    Benign
 Predicted: Malignant
 ```
 
-The final model produced:
+The final model produced **141 false positives**.
 
-**141 false positives.**
-
-False positives may result in unnecessary follow-up examinations, additional testing and patient anxiety.
-
-Therefore, malignant precision is also important.
-
-The final malignant precision was:
+Malignant precision was:
 
 ```text
 0.7860
 ```
 
----
+This indicates that a relatively high proportion of images predicted as malignant were actually malignant, although some benign images were still incorrectly classified.
 
-# 📌 Which Metrics Are Most Important?
+## Important Metrics
 
-For a medical diagnostic system, no single metric is sufficient.
+For a medical classification problem, no single metric is sufficient.
 
-The most important metrics depend on the clinical objective and the consequences of different errors.
+- **Recall / Sensitivity** — proportion of actual malignant samples detected.
+- **Precision** — proportion of malignant predictions that are actually malignant.
+- **F1-score** — balances precision and recall.
+- **ROC-AUC** — measures discrimination across classification thresholds.
+- **Precision-Recall curve** — shows the precision/recall trade-off.
+- **Confusion matrix** — shows TP, TN, FP, and FN directly.
 
-For cancer detection, particular attention should be given to:
-
-### Recall / Sensitivity
-
-Measures how many actual malignant cases are successfully detected.
-
-A low recall means that too many malignant cases are missed.
-
-### Precision
-
-Measures how many predictions of malignant tissue are actually malignant.
-
-### F1-score
-
-Balances precision and recall.
-
-### ROC-AUC
-
-Measures the model's ability to discriminate between benign and malignant samples across classification thresholds.
-
-### Precision-Recall Curve
-
-Shows the trade-off between precision and recall at different thresholds.
-
-### Confusion Matrix
-
-Provides a direct overview of:
-
-* True Positives
-* True Negatives
-* False Positives
-* False Negatives
-
-In a real clinical application, the decision threshold should be chosen according to the clinical cost of false negatives and false positives rather than automatically assuming that 0.5 is optimal.
+In a real clinical application, the classification threshold should be selected according to the clinical consequences of false negatives and false positives rather than automatically assuming that `0.5` is optimal.
 
 ---
 
-# 📉 Visualizations
+# 📈 Visualizations
 
-The project generates several visualizations.
+The project generates the following evaluation artifacts.
 
 ## Training Curves
-
-The following plots are generated:
 
 ```text
 results/training_curves/
@@ -672,84 +526,46 @@ results/training_curves/
 └── auc_training_curve.png
 ```
 
-These plots allow us to investigate:
+These help investigate:
 
-* convergence
-* overfitting
-* underfitting
-* training stability
-* validation performance
+- convergence
+- overfitting
+- underfitting
+- training stability
+- validation performance
 
----
-
-# 📈 ROC Curve
-
-The ROC curve is generated from the final test predictions.
-
-Output:
+## Evaluation
 
 ```text
-results/evaluation/final_test_roc_curve.png
+results/evaluation/
+├── final_test_confusion_matrix.png
+├── final_test_roc_curve.png
+└── final_test_precision_recall_curve.png
 ```
 
-Final test ROC-AUC:
+The ROC curve illustrates the sensitivity/specificity trade-off across thresholds.
 
-```text
-0.7622
-```
+The Precision-Recall curve illustrates the precision/recall trade-off, which is particularly informative when the positive class is important and the classes are imbalanced.
 
----
-
-# 📉 Precision-Recall Curve
-
-The Precision-Recall curve is generated from the final test predictions.
-
-Output:
-
-```text
-results/evaluation/final_test_precision_recall_curve.png
-```
-
-This visualization helps demonstrate the trade-off between precision and recall at different classification thresholds.
-
----
-
-# 📊 Confusion Matrix Visualization
-
-The final confusion matrix visualization is saved to:
-
-```text
-results/evaluation/final_test_confusion_matrix.png
-```
+These plots are descriptive evaluation artifacts and should not be used to tune the final test threshold after observing test performance.
 
 ---
 
 # 🔍 Error Analysis
 
-The project also performs visual analysis of incorrectly classified images.
+The project performs visual analysis of incorrectly classified test images.
 
-## False Positives
+### False Positives
 
 ```text
 Benign → Malignant
 ```
 
-## False Negatives
+### False Negatives
 
 ```text
 Malignant → Benign
 ```
-
-The analysis identifies representative errors and visualizes the corresponding histopathology images.
-
-This can help investigate whether errors are related to:
-
-* visually similar tissue structures
-* staining variations
-* magnification
-* difficult histological patterns
-* image artifacts
-* ambiguous cases
 
 Results are stored in:
 
@@ -757,79 +573,66 @@ Results are stored in:
 results/error_analysis/
 ```
 
+The analysis can help investigate whether errors are associated with:
+
+- visually similar tissue structures
+- staining variations
+- magnification
+- difficult histological patterns
+- image artifacts
+- ambiguous cases
+
+The most confident errors can also be selected for inspection, such as:
+
+- high malignant probability among false positives
+- low malignant probability among false negatives
+
+> ⚠️ Test-set errors are used for qualitative analysis only and should not be used to tune the model.
+
 ---
 
 # 💡 Explainability
 
-The project title includes **Explainable Deep Learning** because understanding model predictions is particularly important in medical applications.
+The project uses the term **Explainable Deep Learning** because understanding model predictions is particularly important in medical applications.
 
 The current project includes:
 
-* quantitative evaluation
-* confusion-matrix analysis
-* false-positive analysis
-* false-negative analysis
-* visualization of model performance
+- quantitative evaluation
+- confusion-matrix analysis
+- false-positive analysis
+- false-negative analysis
+- model-performance visualization
 
-Future explainability work could include:
+### Future Explainability
 
-* feature-map visualization
-* Grad-CAM
-* Grad-CAM++
-* saliency maps
-* activation visualization
+Potential extensions include:
 
-These techniques could help investigate which image regions contribute most strongly to the model's prediction.
+- Feature-map visualization
+- Grad-CAM
+- Grad-CAM++
+- Saliency maps
+- Activation visualization
 
----
-
-# ⭐ Nice-to-Have Features
-
-## Feature Map Visualization
-
-Feature-map visualization would allow us to inspect intermediate activations within the MobileNetV2 network.
-
-This could provide insight into which visual structures the network detects at different stages.
-
-**Status: Not yet implemented.**
-
----
-
-## Comparison with Other CNN Architectures
-
-A future extension would compare MobileNetV2 against alternative CNN architectures such as:
-
-* ResNet
-* EfficientNet
-* VGG
-* other MobileNet variants
-
-Possible comparison metrics:
-
-| Metric        | MobileNetV2 | ResNet | EfficientNet |
-| ------------- | ----------: | -----: | -----------: |
-| Accuracy      |             |        |              |
-| Precision     |             |        |              |
-| Recall        |             |        |              |
-| F1-score      |             |        |              |
-| ROC-AUC       |             |        |              |
-| Parameters    |             |        |              |
-| Training time |             |        |              |
-
-**Status: Not yet implemented.**
+These techniques could help investigate which image regions contribute most strongly to a model prediction.
 
 ---
 
 # 💻 Installation
 
-## 1. Clone the repository
+## Prerequisites
+
+- Python 3.8+
+- pip or conda
+- Approximately 2 GB free disk space for the dataset
+
+## 1. Clone the Repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd Histopathology_Cancer_Diagnosis
+git clone https://github.com/husseinabuammar24-cloud/CV_Histopath_Cancer_Diagnosis.git
+cd CV_Histopath_Cancer_Diagnosis
 ```
 
-## 2. Create a virtual environment
+## 2. Create a Virtual Environment
 
 ### Windows
 
@@ -845,37 +648,29 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-## 3. Install dependencies
+## 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
+## 4. Download the Dataset
 
-# 📥 Dataset Installation
-
-Download the dataset from Kaggle:
-
-[Download BreaKHis from Kaggle](https://www.kaggle.com/datasets/waseemalastal/breakhis-breast-cancer-histopathological-dataset?utm_source=chatgpt.com)
-
-The official source is also available through the UFPR BreaKHis database:
-
-[BreaKHis official database](https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/?utm_source=chatgpt.com)
-
-Place the downloaded dataset inside:
+Download BreaKHis from Kaggle or the official UFPR database and place it under:
 
 ```text
 data/raw/
 ```
 
-The raw dataset is not committed to GitHub because of its size.
+The raw dataset is intentionally not committed to GitHub because of its size.
 
 ---
 
 # 🚀 Usage
 
-## 1. Analyze the dataset
+Run the scripts sequentially.
+
+## 1. Analyze the Dataset
 
 ```bash
 python src/data_analysis.py
@@ -883,41 +678,36 @@ python src/data_analysis.py
 
 This analyzes:
 
-* image classes
-* magnification levels
-* groups
-* dataset structure
-* class distribution
+- image classes
+- class distribution
+- magnification levels
+- groups/cases
+- dataset structure
+- potential leakage
 
----
-
-## 2. Create the train/validation/test split
+## 2. Create the Train/Validation/Test Split
 
 ```bash
 python src/train_val_test.py
 ```
 
-This creates:
+Creates:
 
 ```text
 data/processed/breakhis_split.csv
 ```
 
-The split is performed at the group level to reduce data leakage.
+The split is performed at group level.
 
----
-
-## 3. Prepare preprocessing
+## 3. Prepare the Preprocessing Pipeline
 
 ```bash
 python src/preprocessing.py
 ```
 
-This creates the TensorFlow datasets and applies the MobileNetV2 preprocessing pipeline.
+Creates TensorFlow datasets, applies MobileNetV2 preprocessing, and prepares training augmentation.
 
----
-
-## 4. Train the baseline model
+## 4. Train the Baseline Model
 
 ```bash
 python src/train_model.py
@@ -925,67 +715,78 @@ python src/train_model.py
 
 This trains the initial frozen MobileNetV2 model.
 
----
+Output:
 
-## 5. Fine-tune the model
+```text
+models/experiments/frozen_mobilenetv2.keras
+```
 
-For the 10-layer fine-tuning experiment:
+## 5. Fine-Tune the Model
+
+### 10-layer fine-tuning
 
 ```bash
 python src/finetune_model.py
 ```
 
-For the class-weighted 30-layer fine-tuning experiment:
+### Class-weighted 30-layer fine-tuning
 
 ```bash
 python src/class_weight_model.py
 ```
 
----
+The latter corresponds to the selected final configuration.
 
-## 6. Evaluate the final model
+## 6. Evaluate the Final Model
 
 ```bash
 python src/test_evaluation.py
 ```
 
-This generates:
+Generates:
 
-* accuracy
-* precision
-* recall
-* F1-score
-* ROC-AUC
-* confusion matrix
-* ROC curve
-* Precision-Recall curve
+- accuracy
+- precision
+- recall
+- F1-score
+- ROC-AUC
+- confusion matrix
+- ROC curve
+- Precision-Recall curve
 
----
-
-## 7. Analyze errors
+## 7. Analyze Errors
 
 ```bash
 python src/error_analysis.py
 ```
 
-This identifies and visualizes false positives and false negatives.
+Identifies and visualizes false positives and false negatives.
 
 ---
 
 # 📁 Repository Structure
 
 ```text
-Histopathology_Cancer_Diagnosis/
+CV_Histopath_Cancer_Diagnosis/
+│
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── LICENSE
+├── BreakHis_Project_Future_Reference_Documentation.pdf
 │
 ├── data/
-│   ├── raw/
+│   ├── raw/                         # Local dataset; not committed
 │   │   └── BreakHis/
-│   │
 │   └── processed/
 │       └── breakhis_split.csv
 │
 ├── models/
 │   └── experiments/
+│       ├── frozen_mobilenetv2.keras
+│       ├── 10layer_finetune.keras
+│       ├── 30layer_finetune.keras
+│       └── best_classweighted_30_finetune_layers.keras
 │
 ├── results/
 │   ├── training_curves/
@@ -993,242 +794,199 @@ Histopathology_Cancer_Diagnosis/
 │   ├── error_analysis/
 │   └── preprocessing/
 │
-├── src/
-│   ├── data_analysis.py
-│   ├── train_val_test.py
-│   ├── preprocessing.py
-│   ├── train_model.py
-│   ├── finetune_model.py
-│   ├── class_weight_model.py
-│   ├── test_evaluation.py
-│   └── error_analysis.py
-│
-├── README.md
-├── requirements.txt
-├── .gitignore
-└── LICENSE
+└── src/
+    ├── data_analysis.py
+    ├── train_val_test.py
+    ├── preprocessing.py
+    ├── train_model.py
+    ├── finetune_model.py
+    ├── class_weight_model.py
+    ├── test_evaluation.py
+    └── error_analysis.py
 ```
+
+### Script Responsibilities
+
+| Script | Purpose |
+|---|---|
+| `data_analysis.py` | Dataset inspection, statistics, magnification and group analysis |
+| `train_val_test.py` | Leakage-safe group-level split |
+| `preprocessing.py` | TensorFlow datasets, preprocessing and augmentation |
+| `train_model.py` | Frozen MobileNetV2 baseline |
+| `finetune_model.py` | Fine-tuning experiment |
+| `class_weight_model.py` | Class-weighted fine-tuning experiment |
+| `test_evaluation.py` | Final held-out test evaluation |
+| `error_analysis.py` | False-positive and false-negative analysis |
 
 ---
 
-# 📅 Timeline
+# 🗓️ Project Timeline
 
 ## Day 1 — Dataset and Model Development
 
-* Download the BreaKHis dataset.
-* Inspect the folder structure.
-* Analyze the number of images.
-* Analyze the number of patients.
-* Analyze benign and malignant classes.
-* Analyze histological subtypes.
-* Analyze magnification levels.
-* Create group-level train/validation/test splits.
-* Implement preprocessing.
-* Implement data augmentation.
-* Build the MobileNetV2 transfer-learning model.
-* Train the frozen baseline model.
-* Begin hyperparameter experiments.
+- Download BreaKHis dataset
+- Inspect folder structure
+- Analyze images, patients, classes and subtypes
+- Analyze magnification levels
+- Create group-level train/validation/test split
+- Implement preprocessing
+- Implement data augmentation
+- Build MobileNetV2 transfer-learning model
+- Train frozen baseline
+- Begin hyperparameter experiments
 
 ## Day 2 — Optimization and Evaluation
 
-* Fine-tune MobileNetV2.
-* Experiment with different numbers of trainable layers.
-* Experiment with class weighting.
-* Select the best model using validation performance.
-* Evaluate the final model on the test set.
-* Generate training and validation curves.
-* Generate the confusion matrix.
-* Generate ROC and Precision-Recall curves.
-* Analyze false positives and false negatives.
-* Document the project.
-* Prepare the GitHub repository.
-
----
-
-# 👥 Contributors
-
-| Contributor   | Role                            |
-| ------------- | ------------------------------- |
-| Contributor 1 | Computer Vision / Deep Learning |
-| Contributor 2 | Computer Vision / Deep Learning |
-
-Replace these placeholders with the actual team members before publishing the repository.
-
----
-
-# 👤 Personal Situation
-
-This project was developed as part of a **Computer Vision consolidation challenge**.
-
-The original challenge focused on designing a CNN capable of recognizing pneumonia in X-ray images.
-
-For this project, the same machine-learning workflow was adapted to breast cancer histopathology.
-
-The project provided practical experience with:
-
-* medical image classification
-* convolutional neural networks
-* transfer learning
-* MobileNetV2
-* image preprocessing
-* data augmentation
-* hyperparameter tuning
-* class weighting
-* model evaluation
-* error analysis
-* explainable AI concepts
-
-A particular focus was placed on understanding that medical machine-learning systems should not be evaluated using accuracy alone.
-
-In a medical environment, false negatives and false positives can have very different consequences. Therefore, precision, recall, F1-score, ROC-AUC and the confusion matrix are all important when evaluating the model.
-
----
-
-# ✅ Challenge Checklist
-
-## Must-Have Features
-
-* [x] CNN trained on the dataset
-* [x] Classification of new/unseen images
-* [x] Training/validation/test split
-* [x] Group-level splitting to reduce data leakage
-* [x] Transfer learning
-* [x] Hyperparameter experimentation
-* [x] Confusion matrix
-* [x] Accuracy
-* [x] Precision
-* [x] Recall
-* [x] F1-score
-* [x] ROC-AUC
-* [x] ROC curve
-* [x] Precision-Recall curve
-* [x] Training/validation curves
-* [x] False-positive analysis
-* [x] False-negative analysis
-* [x] Discussion of medical evaluation metrics
-
-## Nice-to-Have Features
-
-* [ ] Feature-map visualization
-* [ ] Comparison with other CNN architectures
-* [ ] Grad-CAM / advanced explainability
-
----
-
-# 🏆 Results Summary
-
-## Final Model
-
-```text
-MobileNetV2
-+ ImageNet pretrained weights
-+ Global Average Pooling
-+ Dropout(0.5)
-+ Dense(1, sigmoid)
-+ 30-layer fine-tuning
-+ Class weighting
-```
-
-## Validation
-
-```text
-Best Validation AUC: 0.8208
-```
-
-## Final Test Performance
-
-```text
-Accuracy:             0.6743
-Malignant Precision:  0.7860
-Malignant Recall:     0.6016
-Malignant F1-score:   0.6816
-Test ROC-AUC:         0.7622
-```
-
-## Confusion Matrix
-
-```text
-TN = 484
-FP = 141
-FN = 343
-TP = 518
-```
-
-The validation AUC was higher than the final test AUC:
-
-```text
-Validation AUC: 0.8208
-Test AUC:       0.7622
-Difference:     0.0586
-```
-
-This difference is considered when discussing model generalization.
+- Fine-tune MobileNetV2
+- Experiment with different numbers of trainable layers
+- Experiment with class weighting
+- Select the best model using validation performance
+- Evaluate once on the held-out test set
+- Generate training curves
+- Generate confusion matrix
+- Generate ROC and Precision-Recall curves
+- Analyze false positives and false negatives
+- Document the project
+- Prepare the GitHub repository
 
 ---
 
 # ⚠️ Limitations
 
-The final model demonstrates useful classification ability, but its performance is not sufficient for independent clinical diagnosis.
+The final model demonstrates useful classification ability, but its performance is **not sufficient for independent clinical diagnosis**.
 
-In particular, the number of false negatives demonstrates that the model still misses a substantial number of malignant samples.
+In particular:
 
-The model should therefore be considered an:
+- 343 malignant test images were classified as benign.
+- Test ROC-AUC (0.7622) is lower than validation AUC (0.8208).
+- The dataset is limited to the available BreaKHis population.
+- External generalization has not been established.
+- The classification threshold has not been optimized using an independent clinical objective.
+- Probability calibration has not been performed.
+- Advanced explainability methods have not yet been implemented.
+
+A real clinical system would require, among other things:
+
+- independent external validation
+- evaluation on additional patient populations
+- careful threshold selection
+- probability calibration
+- robustness testing
+- explainability
+- clinical validation
+- comparison with qualified medical professionals
+- appropriate regulatory approval
+
+The current system should therefore be considered an:
 
 > **Educational and research prototype**
 
 rather than a medical diagnostic device.
 
-A real clinical system would require:
+---
 
-* independent external validation
-* evaluation on additional patient populations
-* careful classification-threshold selection
-* probability calibration
-* robustness testing
-* explainability
-* clinical validation
-* comparison with qualified medical professionals
-* appropriate regulatory approval
+# ⭐ Future Work / Nice-to-Have Features
+
+### 1. Feature-Map Visualization
+
+Inspect intermediate MobileNetV2 activations to understand what visual structures are detected at different network stages.
+
+**Status:** Not yet implemented.
+
+### 2. Grad-CAM / Advanced Explainability
+
+Implement Grad-CAM, Grad-CAM++, saliency maps, or related methods to visualize image regions influencing predictions.
+
+**Status:** Not yet implemented.
+
+### 3. Compare CNN Architectures
+
+Compare MobileNetV2 with architectures such as:
+
+- ResNet
+- EfficientNet
+- VGG
+- other MobileNet variants
+
+Potential comparison metrics:
+
+| Metric | MobileNetV2 | ResNet | EfficientNet |
+|---|---:|---:|---:|
+| Accuracy | | | |
+| Precision | | | |
+| Recall | | | |
+| F1-score | | | |
+| ROC-AUC | | | |
+| Parameters | | | |
+| Training time | | | |
+
+**Status:** Not yet implemented.
+
+### 4. Threshold Optimization
+
+If threshold optimization is pursued, it should be performed using the **validation set**, not the final test set. Once selected and frozen, the threshold can be applied once to the held-out test set.
+
+### 5. Eight-Class Classification
+
+Extend the binary task to classification of the eight BreaKHis histological subtypes.
+
+---
+
+# ✅ Challenge Checklist
+
+## Must-Have
+
+- [x] CNN trained on the dataset
+- [x] Classification of unseen images
+- [x] Training/validation/test split
+- [x] Group-level splitting
+- [x] Leakage checks
+- [x] Transfer learning
+- [x] Hyperparameter experimentation
+- [x] Class weighting experiment
+- [x] Confusion matrix
+- [x] Accuracy
+- [x] Precision
+- [x] Recall
+- [x] F1-score
+- [x] ROC-AUC
+- [x] ROC curve
+- [x] Precision-Recall curve
+- [x] Training/validation curves
+- [x] False-positive analysis
+- [x] False-negative analysis
+- [x] Discussion of medical evaluation metrics
+
+## Nice-to-Have
+
+- [ ] Feature-map visualization
+- [ ] Grad-CAM / advanced explainability
+- [ ] Comparison with other CNN architectures
+- [ ] Eight-class classification
 
 ---
 
 # 📚 Sources and References
 
-## Dataset Sources
+### Dataset
 
-### 1. Official BreaKHis Database — Universidade Federal do Paraná
+1. **BreaKHis Official Database — Universidade Federal do Paraná**  
+   https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/
 
-[BreaKHis Official Database](https://web.inf.ufpr.br/vri/databases/breast-cancer-histopathological-database-breakhis/?utm_source=chatgpt.com)
+2. **BreaKHis on Kaggle**  
+   https://www.kaggle.com/datasets/waseemalastal/breakhis-breast-cancer-histopathological-dataset
 
-The official source provides information about the BreaKHis database, its classes, patients, magnification levels, dataset statistics and original publications.
+3. **Original BreaKHis Research Paper**  
+   Spanhol, F. A., Oliveira, L. S., Petitjean, C., & Heutte, L.  
+   *A Dataset for Breast Cancer Histopathological Image Classification.*  
+   IEEE Transactions on Biomedical Engineering, 63(7), 1455–1462, 2016.
 
-### 2. Kaggle — BreaKHis Breast Cancer Histopathological Dataset
-
-[BreaKHis on Kaggle](https://www.kaggle.com/datasets/waseemalastal/breakhis-breast-cancer-histopathological-dataset?utm_source=chatgpt.com)
-
-This is the Kaggle dataset used as the project's dataset source.
-
-### 3. Original BreaKHis Research Paper
-
-Spanhol, F. A., Oliveira, L. S., Petitjean, C., & Heutte, L.
-
-**A Dataset for Breast Cancer Histopathological Image Classification.**
-
-IEEE Transactions on Biomedical Engineering, 63(7), 1455–1462, 2016.
-
-The official BreaKHis database requests that researchers acknowledge the original publication when using the database.
-
-### 4. Kaggle BreaKHis Dataset Version with 224×224 Images
-
-[BreaKHis — 224×224 Kaggle Dataset Version](https://www.kaggle.com/datasets/tathagatbanerjee/breakhis-breast-cancer-histopathological?utm_source=chatgpt.com)
-
-This dataset description explicitly states that the BreaKHis images were resized to 224×224 pixels and organized for binary and multi-class classification.
+4. **BreaKHis 224×224 Kaggle Dataset Version**  
+   https://www.kaggle.com/datasets/tathagatbanerjee/breakhis-breast-cancer-histopathological
 
 ---
 
-# 📌 Final Note
-
-This repository demonstrates an end-to-end workflow for deep-learning-based histopathology image classification:
+# 🔬 End-to-End Workflow
 
 ```text
 BreaKHis Dataset
@@ -1243,7 +1001,7 @@ Group-Level Split
 Preprocessing
        │
        ▼
-Data Augmentation
+Training Augmentation
        │
        ▼
 MobileNetV2 Transfer Learning
@@ -1252,13 +1010,13 @@ MobileNetV2 Transfer Learning
 Hyperparameter Experiments
        │
        ▼
-Fine-Tuning
+Fine-Tuning + Class Weighting
        │
        ▼
 Validation-Based Model Selection
        │
        ▼
-Final Test Evaluation
+Held-Out Test Evaluation
        │
        ▼
 ROC / PR / Confusion Matrix
@@ -1270,6 +1028,56 @@ False Positive / False Negative Analysis
 Explainability / Future Work
 ```
 
-The final model achieved a **validation AUC of 0.8208** and a **test ROC-AUC of 0.7622**.
+---
 
-The project demonstrates not only how to train a CNN for medical image classification, but also why **data leakage prevention, model selection, multiple evaluation metrics, visualization, and error analysis are essential when developing machine-learning systems for medical applications**.
+# 📌 Key Results at a Glance
+
+| Item | Value |
+|---|---|
+| Dataset | BreaKHis |
+| Total images | **7,909** |
+| Train / Validation / Test | **5,303 / 1,120 / 1,486** |
+| Classes | **Benign / Malignant** |
+| Input | **224 × 224 RGB** |
+| Model | **MobileNetV2 + GAP + Dropout(0.5) + Dense(1, sigmoid)** |
+| Fine-tuning | **30 layers** |
+| Class weighting | **Yes** |
+| Learning rate | **1e-4** |
+| Best validation AUC | **0.8208** |
+| Test accuracy | **0.6743** |
+| Test malignant precision | **0.7860** |
+| Test malignant recall | **0.6016** |
+| Test malignant F1 | **0.6816** |
+| Test ROC-AUC | **0.7622** |
+| TN / FP / FN / TP | **484 / 141 / 343 / 518** |
+
+---
+
+# 👤 Project Context
+
+This project was developed as part of a **Computer Vision consolidation challenge**. The original challenge focused on pneumonia detection in chest X-rays; the methodology was adapted here to breast histopathology classification.
+
+The project provided practical experience with:
+
+- medical image classification
+- convolutional neural networks
+- transfer learning
+- MobileNetV2
+- image preprocessing
+- data augmentation
+- hyperparameter tuning
+- class weighting
+- model evaluation
+- error analysis
+- explainable AI concepts
+
+A particular focus was placed on understanding that medical machine-learning systems should not be evaluated using accuracy alone and that **data leakage prevention, model-selection discipline, multiple evaluation metrics, visualization, and error analysis** are essential.
+
+---
+
+## Made with ❤️ for learning and research
+
+If you find the project useful, consider ⭐ starring the repository.
+
+Repository:  
+https://github.com/husseinabuammar24-cloud/CV_Histopath_Cancer_Diagnosis
