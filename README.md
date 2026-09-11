@@ -25,55 +25,52 @@ The project follows an eight-stage workflow, from raw data to final documentatio
 
 ## 3. Repository structure
 
+​```
 CV_Histopath_Cancer_Diagnosis/
+├── data/
+│   └── processed/
+│       ├── breakhis_split.csv                     # Image-level metadata with assigned train/val/test split
+│       ├── augmented_training_batch.png           # Preview grid of augmented training images
+│       └── augmented_training_preview.png         # Preview of augmentation pipeline output
 │
-├── **data/** 
-│ └── processed/
-│ ├── breakhis_split.csv                                    # Image-level metadata with assigned train/val/test split
-│ ├── augmented_training_batch.png                          # Preview grid of augmented training images
-│ └── augmented_training_preview.png                        # Preview of augmentation pipeline output
+├── models/
+│   ├── experiments/
+│   │   ├── best_frozen_mobilenetv2.keras          # Frozen baseline checkpoint (head-only training)
+│   │   ├── best_finetuned_10layers.keras          # Top-10-layer fine-tuned checkpoint
+│   │   └── best_classweighted_30finetune_layers.keras  # Class-weighted 30-layer fine-tune checkpoint
+│   └── final_model.keras                          # Selected final model used for test evaluation
 │
-├── **models/**
-│ ├── experiments/
-│ │ ├── best_frozen_mobilenetv2.keras                       # Frozen baseline checkpoint (head-only training)
-│ │ ├── best_finetuned_10layers.keras                       # Top-10-layer fine-tuned checkpoint
-│ │ └── best_classweighted_30finetune_layers.keras          # Class-weighted 30-layer fine-tune checkpoint
-│ └── final_model.keras                                          # Selected final model used for test evaluation
+├── results/
+│   ├── error_analysis/
+│   │   ├── final_false_negative_examples.png      # Grid of most-confident malignant-as-benign errors
+│   │   └── final_false_positive_examples.png      # Grid of most-confident benign-as-malignant errors
+│   ├── evaluation/
+│   │   ├── final_test_confusion_matrix.png        # TN/FP/FN/TP counts on the held-out test set
+│   │   ├── final_test_precision_recall_curve.png  # Precision vs. recall trade-off on the test set
+│   │   └── final_test_roc_curve.png               # ROC curve and AUC on the test set
+│   ├── pipeline/
+│   │   └── breakhis_pipeline_colorful.png         # Visual diagram of the end-to-end project pipeline
+│   └── training_curves/
+│       ├── accuracy_training_curve.png            # Training vs. validation accuracy per epoch
+│       ├── auc_training_curve.png                 # Training vs. validation AUC per epoch
+│       ├── loss_training_curve.png                # Training vs. validation loss per epoch
+│       ├── precision_training_curve.png           # Training vs. validation precision per epoch
+│       └── recall_training_curve.png              # Training vs. validation recall per epoch
 │
-├── **results/**
-│ ├── error_analysis/
-│ │ ├── final_false_negative_examples.png                   # Grid of most-confident malignant-as-benign errors
-│ │ └── final_false_positive_examples.png                   # Grid of most-confident benign-as-malignant errors
-│ │
-│ ├── evaluation/
-│ │ ├── final_test_confusion_matrix.png                     # TN/FP/FN/TP counts on the held-out test set
-│ │ ├── final_test_precision_recall_curve.png               # Precision vs. recall trade-off on the test set
-│ │ └── final_test_roc_curve.png                            # ROC curve and AUC on the test set
-│ │
-│ ├── pipeline/
-│ │ └── breakhis_pipeline_colorful.png                      # Visual diagram of the end-to-end project pipeline
-│ │
-│ └── training_curves/
-│ ├── accuracy_training_curve.png                           # Training vs. validation accuracy per epoch
-│ ├── auc_training_curve.png                                # Training vs. validation AUC per epoch
-│ ├── loss_training_curve.png                               # Training vs. validation loss per epoch
-│ ├── precision_training_curve.png                          # Training vs. validation precision per epoch
-│ └── recall_training_curve.png                             # Training vs. validation recall per epoch
+├── src/
+│   ├── data_analysis.py           # Explores dataset structure, classes, magnifications, and groups
+│   ├── train_val_test.py          # Creates and verifies the leakage-safe group-level split
+│   ├── preprocessing.py           # Builds TensorFlow datasets, normalization, and augmentation
+│   ├── train_model.py             # Trains the frozen MobileNetV2 baseline
+│   ├── finetune_model.py          # Fine-tunes the top 10 MobileNetV2 layers
+│   ├── class_weight_model.py      # Runs the class-weighted 30-layer fine-tuning experiment
+│   ├── test_evaluation.py         # Runs final held-out test evaluation and saves metric plots
+│   └── error_analysis.py          # Inspects and visualizes false positives and false negatives
 │
-├── **src/**
-│ ├── data_analysis.py                                      # Explores dataset structure, classes, magnifications, and groups
-│ ├── train_val_test.py                                     # Creates and verifies the leakage-safe group-level split
-│ ├── preprocessing.py                                      # Builds TensorFlow datasets, normalization, and augmentation
-│ ├── train_model.py                                        # Trains the frozen MobileNetV2 baseline
-│ ├── finetune_model.py                                     # Fine-tunes the top 10 MobileNetV2 layers
-│ ├── class_weight_model.py                                 # Runs the class-weighted 30-layer fine-tuning experiment
-│ ├── test_evaluation.py                                    # Runs final held-out test evaluation and saves metric plots
-│ └── error_analysis.py                                     # Inspects and visualizes false positives and false negatives
-│
-├── .gitignore                                              # Excludes caches, envs, raw data, and other local-only files
-├── README.md                                               # Project documentation
-└── requirements.txt                                        # Python package dependencies
-
+├── .gitignore                     # Excludes caches, envs, raw data, and other local-only files
+├── README.md                      # Project documentation
+└── requirements.txt                # Python package dependencies
+​```
 
 ---
 
