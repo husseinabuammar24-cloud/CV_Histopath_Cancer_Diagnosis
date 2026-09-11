@@ -6,7 +6,22 @@ This project classifies breast histopathology images as **benign** or **malignan
 
 ---
 
-## 2. Installation
+## 2. Pipeline
+
+The project follows an eight-stage workflow, from raw data to final documentation:
+
+1. **Explore data & split** — Leakage-safe grouping at case/slide level.
+2. **Preprocessing pipeline** — Resize, normalize, augment.
+3. **Baseline training** — Frozen MobileNetV2.
+4. **Fine-tuning experiments** — Unfreeze top layers.
+5. **Class-weighted training & selection** — Best validation AUC.
+6. **Final test evaluation** — Metrics and curves.
+7. **Error analysis** — FP / FN inspection.
+8. **Documentation** — README and reference.
+
+![Project pipeline](results/pipeline/pipeline_diagram.png)
+
+## 3. Installation
 
 ```bash
 git clone https://github.com/<your-username>/CV_Histopath_Cancer_Diagnosis.git
@@ -22,7 +37,7 @@ Download the [BreakHis dataset](https://web.inf.ufpr.br/vri/databases/breast-can
 
 ---
 
-## 3. Usage
+## 4. Usage
 
 ```bash
 python src/data_analysis.py       # explore the dataset
@@ -39,7 +54,7 @@ python src/error_analysis.py      # inspect misclassifications
 ---
 
 
-## 4. Visuals
+## 5. Visuals
 
 ### Final test evaluation
 
@@ -84,13 +99,13 @@ The most confidently misclassified benign and malignant test images, selected fo
 
 ---
 
-## 5. Contributor
+## 6. Contributor
 
 * [Hussein Abuammar](https://www.linkedin.com/in/hussein-abuammar/)
 
 ---
 
-## 6. Timeline
+## 7. Timeline
 
 * **Day 1** — Dataset exploration.
 * **Day 2** — Leakage-safe split, preprocessing.
@@ -100,7 +115,7 @@ The most confidently misclassified benign and malignant test images, selected fo
 
 ---
 
-## 7. Personal situation
+## 8. Personal situation
 
 This project was completed as a 5-day consolidation challenge, worked on solo. The original challenge brief was adapted to a different domain, which meant designing the dataset split, preprocessing pipeline, and evaluation methodology from scratch within a tight timeframe, rather than following a fixed template.
 
