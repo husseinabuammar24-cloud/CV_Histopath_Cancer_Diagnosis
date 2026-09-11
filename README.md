@@ -47,15 +47,21 @@ python src/error_analysis.py      # inspect misclassifications
 |---|---|---|
 | ![Confusion matrix](results/evaluation/final_test_confusion_matrix.png) | ![ROC curve](results/evaluation/final_test_roc_curve.png) | ![Precision-recall curve](results/evaluation/final_test_precision_recall_curve.png) |
 
+484 benign correctly classified, 141 false positives, 343 false negatives, 518 malignant correctly caught. The ROC curve shows the true/false positive rate trade-off across thresholds (AUC = 0.7622), comfortably above random guessing. The precision-recall curve shows precision dropping as recall increases, which is expected and especially relevant here since malignant is the clinically important class.
+
 ### Training curves
 
 | Loss | Accuracy | AUC |
 |---|---|---|
 | ![Loss curve](results/training_curves/loss_training_curve.png) | ![Accuracy curve](results/training_curves/accuracy_training_curve.png) | ![AUC curve](results/training_curves/auc_training_curve.png) |
 
+Training loss decreases steadily while validation loss flattens and slightly rises after epoch 1, a sign of mild overfitting. Training accuracy climbs smoothly, but validation accuracy is noisy and trends downward late. Training AUC plateaus high (~0.85) while validation AUC stays much lower and flat — the clearest sign of a generalization gap.
+
 | Precision | Recall |
 |---|---|
 | ![Precision curve](results/training_curves/precision_training_curve.png) | ![Recall curve](results/training_curves/recall_training_curve.png) |
+
+Validation precision is actually higher than training precision throughout, likely a side effect of class weighting. Training recall rises steadily, while validation recall is volatile and ends lower than where it started, echoing the AUC pattern.
 
 ### Error analysis
 
@@ -63,6 +69,7 @@ python src/error_analysis.py      # inspect misclassifications
 |---|---|
 | ![False positives](results/error_analysis/final_false_positive_examples.png) | ![False negatives](results/error_analysis/final_false_negative_examples.png) |
 
+The most confidently misclassified benign and malignant test images, selected for qualitative inspection of visual patterns behind the model's errors.
 
 ---
 
