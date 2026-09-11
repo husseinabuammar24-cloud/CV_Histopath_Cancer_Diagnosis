@@ -119,4 +119,8 @@ The most confidently misclassified benign and malignant test images, selected fo
 
 This project was completed as a 5-day consolidation challenge, worked on solo. The original challenge brief was adapted to a different domain, which meant designing the dataset split, preprocessing pipeline, and evaluation methodology from scratch within a tight timeframe, rather than following a fixed template.
 
+<<<<<<< HEAD
 This challenge was great experience for me in working with computer vision and medical images. My main constraint, however, was class imbalance, which affected the final malignant recall (0.6016).
+=======
+This challenge was great experience for me in working with computer vision and medical images. My main constraint, however, was class imbalance, which affected the final malignant recall (0.6016).
+>>>>>>> a7cb4848d514588532b7f74a0dcd09103702dd8e
