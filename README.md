@@ -19,7 +19,7 @@ The project follows an eight-stage workflow, from raw data to final documentatio
 7. **Error analysis** — FP / FN inspection.
 8. **Documentation** — README and reference.
 
-![Project pipeline](results/pipeline/pipeline_diagram.png)
+[Project pipeline](results/pipeline/breakhis_pipeline_colorful.png)
 
 ## 3. Installation
 
