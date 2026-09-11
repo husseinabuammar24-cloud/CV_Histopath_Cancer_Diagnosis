@@ -21,7 +21,63 @@ The project follows an eight-stage workflow, from raw data to final documentatio
 
 ![Project pipeline](results/pipeline/breakhis_pipeline_colorful.png)
 
-## 3. Installation
+---
+
+## 3. Repository structure
+
+CV_Histopath_Cancer_Diagnosis/
+│
+├── **data/** 
+│ └── processed/
+│ ├── breakhis_split.csv                                    # Image-level metadata with assigned train/val/test split
+│ ├── augmented_training_batch.png                          # Preview grid of augmented training images
+│ └── augmented_training_preview.png                        # Preview of augmentation pipeline output
+│
+├── **models/**
+│ ├── experiments/
+│ │ ├── best_frozen_mobilenetv2.keras                       # Frozen baseline checkpoint (head-only training)
+│ │ ├── best_finetuned_10layers.keras                       # Top-10-layer fine-tuned checkpoint
+│ │ └── best_classweighted_30finetune_layers.keras          # Class-weighted 30-layer fine-tune checkpoint
+│ └── final_model.keras                                          # Selected final model used for test evaluation
+│
+├── **results/**
+│ ├── error_analysis/
+│ │ ├── final_false_negative_examples.png                   # Grid of most-confident malignant-as-benign errors
+│ │ └── final_false_positive_examples.png                   # Grid of most-confident benign-as-malignant errors
+│ │
+│ ├── evaluation/
+│ │ ├── final_test_confusion_matrix.png                     # TN/FP/FN/TP counts on the held-out test set
+│ │ ├── final_test_precision_recall_curve.png               # Precision vs. recall trade-off on the test set
+│ │ └── final_test_roc_curve.png                            # ROC curve and AUC on the test set
+│ │
+│ ├── pipeline/
+│ │ └── breakhis_pipeline_colorful.png                      # Visual diagram of the end-to-end project pipeline
+│ │
+│ └── training_curves/
+│ ├── accuracy_training_curve.png                           # Training vs. validation accuracy per epoch
+│ ├── auc_training_curve.png                                # Training vs. validation AUC per epoch
+│ ├── loss_training_curve.png                               # Training vs. validation loss per epoch
+│ ├── precision_training_curve.png                          # Training vs. validation precision per epoch
+│ └── recall_training_curve.png                             # Training vs. validation recall per epoch
+│
+├── **src/**
+│ ├── data_analysis.py                                      # Explores dataset structure, classes, magnifications, and groups
+│ ├── train_val_test.py                                     # Creates and verifies the leakage-safe group-level split
+│ ├── preprocessing.py                                      # Builds TensorFlow datasets, normalization, and augmentation
+│ ├── train_model.py                                        # Trains the frozen MobileNetV2 baseline
+│ ├── finetune_model.py                                     # Fine-tunes the top 10 MobileNetV2 layers
+│ ├── class_weight_model.py                                 # Runs the class-weighted 30-layer fine-tuning experiment
+│ ├── test_evaluation.py                                    # Runs final held-out test evaluation and saves metric plots
+│ └── error_analysis.py                                     # Inspects and visualizes false positives and false negatives
+│
+├── .gitignore                                              # Excludes caches, envs, raw data, and other local-only files
+├── README.md                                               # Project documentation
+└── requirements.txt                                        # Python package dependencies
+
+
+---
+
+## 4. Installation
 
 ```bash
 git clone https://github.com/<your-username>/CV_Histopath_Cancer_Diagnosis.git
@@ -37,7 +93,7 @@ Download the [BreakHis dataset](https://web.inf.ufpr.br/vri/databases/breast-can
 
 ---
 
-## 4. Usage
+## 5. Usage
 
 ```bash
 python src/data_analysis.py       # explore the dataset
@@ -53,8 +109,7 @@ python src/error_analysis.py      # inspect misclassifications
 
 ---
 
-
-## 5. Visuals
+## 6. Visuals
 
 ### Final test evaluation
 
@@ -99,13 +154,13 @@ The most confidently misclassified benign and malignant test images, selected fo
 
 ---
 
-## 6. Contributor
+## 7. Contributor
 
 * [Hussein Abuammar](https://www.linkedin.com/in/hussein-abuammar/)
 
 ---
 
-## 7. Timeline
+## 8. Timeline
 
 * **Day 1** — Dataset exploration.
 * **Day 2** — Leakage-safe split, preprocessing.
@@ -115,12 +170,8 @@ The most confidently misclassified benign and malignant test images, selected fo
 
 ---
 
-## 8. Personal situation
+## 9. Personal situation
 
 This project was completed as a 5-day consolidation challenge, worked on solo. The original challenge brief was adapted to a different domain, which meant designing the dataset split, preprocessing pipeline, and evaluation methodology from scratch within a tight timeframe, rather than following a fixed template.
 
-<<<<<<< HEAD
 This challenge was great experience for me in working with computer vision and medical images. My main constraint, however, was class imbalance, which affected the final malignant recall (0.6016).
-=======
-This challenge was great experience for me in working with computer vision and medical images. My main constraint, however, was class imbalance, which affected the final malignant recall (0.6016).
->>>>>>> a7cb4848d514588532b7f74a0dcd09103702dd8e
