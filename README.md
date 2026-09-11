@@ -86,7 +86,7 @@ The most confidently misclassified benign and malignant test images, selected fo
 
 ## 5. Contributor
 
-* [Hussein Abuammar](https://www.linkedin.com/in/hussein-abuammar/)()
+* [Hussein Abuammar](https://www.linkedin.com/in/hussein-abuammar/)
 
 ---
 
