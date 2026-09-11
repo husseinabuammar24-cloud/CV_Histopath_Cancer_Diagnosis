@@ -1,12 +1,27 @@
 # BreakHis Breast Cancer Classification
 
-## 📌 Description
+## 1. Description
 
 This project classifies breast histopathology images as **benign** or **malignant** using the BreakHis dataset. It uses transfer learning with a MobileNetV2 backbone (pretrained on ImageNet), with a strong focus on proper evaluation: leakage-safe data splitting and close attention to false negatives, since missing a malignant case matters most in a medical context.
 
 ---
 
-## 🚀 Installation
+## 2. Pipeline
+
+The project follows an eight-stage workflow, from raw data to final documentation:
+
+1. **Explore data & split** — Leakage-safe grouping at case/slide level.
+2. **Preprocessing pipeline** — Resize, normalize, augment.
+3. **Baseline training** — Frozen MobileNetV2.
+4. **Fine-tuning experiments** — Unfreeze top layers.
+5. **Class-weighted training & selection** — Best validation AUC.
+6. **Final test evaluation** — Metrics and curves.
+7. **Error analysis** — FP / FN inspection.
+8. **Documentation** — README and reference.
+
+![Project pipeline](results/pipeline/pipeline_diagram.png)
+
+## 3. Installation
 
 ```bash
 git clone https://github.com/<your-username>/CV_Histopath_Cancer_Diagnosis.git
@@ -22,7 +37,7 @@ Download the [BreakHis dataset](https://web.inf.ufpr.br/vri/databases/breast-can
 
 ---
 
-## 🧪 Usage
+## 4. Usage
 
 ```bash
 python src/data_analysis.py       # explore the dataset
@@ -38,19 +53,42 @@ python src/error_analysis.py      # inspect misclassifications
 
 ---
 
-## 📊 Visuals
 
-| Visualization | Location |
+## 5. Visuals
+
+### Final test evaluation
+
+| Confusion matrix | ROC curve | Precision-recall curve |
+|---|---|---|
+| ![Confusion matrix](results/evaluation/final_test_confusion_matrix.png) | ![ROC curve](results/evaluation/final_test_roc_curve.png) | ![Precision-recall curve](results/evaluation/final_test_precision_recall_curve.png) |
+
+484 benign correctly classified, 141 false positives, 343 false negatives, 518 malignant correctly caught. The ROC curve shows the true/false positive rate trade-off across thresholds (AUC = 0.7622), comfortably above random guessing. The precision-recall curve shows precision dropping as recall increases, which is expected and especially relevant here since malignant is the clinically important class.
+
+### Training curves
+
+| Loss | Accuracy | AUC |
+|---|---|---|
+| ![Loss curve](results/training_curves/loss_training_curve.png) | ![Accuracy curve](results/training_curves/accuracy_training_curve.png) | ![AUC curve](results/training_curves/auc_training_curve.png) |
+
+Training loss decreases steadily while validation loss flattens and slightly rises after epoch 1, a sign of mild overfitting. Training accuracy climbs smoothly, but validation accuracy is noisy and trends downward late. Training AUC plateaus high (~0.85) while validation AUC stays much lower and flat — the clearest sign of a generalization gap.
+
+| Precision | Recall |
 |---|---|
-| Training curves | `results/training_curves/` |
-| Confusion matrix | `results/evaluation/final_test_confusion_matrix.png` |
-| ROC curve | `results/evaluation/final_test_roc_curve.png` |
-| Precision-recall curve | `results/evaluation/final_test_precision_recall_curve.png` |
-| False positive / negative grids | `results/error_analysis/` |
+| ![Precision curve](results/training_curves/precision_training_curve.png) | ![Recall curve](results/training_curves/recall_training_curve.png) |
+
+Validation precision is actually higher than training precision throughout, likely a side effect of class weighting. Training recall rises steadily, while validation recall is volatile and ends lower than where it started, echoing the AUC pattern.
+
+### Error analysis
+
+| False positives (benign → malignant) | False negatives (malignant → benign) |
+|---|---|
+| ![False positives](results/error_analysis/final_false_positive_examples.png) | ![False negatives](results/error_analysis/final_false_negative_examples.png) |
+
+The most confidently misclassified benign and malignant test images, selected for qualitative inspection of visual patterns behind the model's errors.
 
 ---
 
-## ⚠️ Important notes
+## Important notes
 
 * **Class imbalance** — the dataset is not perfectly balanced between benign and malignant cases; the strongest experiment uses balanced class weights during training to correct for this.
 * **Group-level splitting** — images from the same case/slide are kept together in one split only, to avoid data leakage between train, validation, and test.
@@ -61,20 +99,24 @@ python src/error_analysis.py      # inspect misclassifications
 
 ---
 
-## 👥 Contributors
+## 6. Contributor
 
-* [Your name](https://github.com/your-username)
-* [Teammate's name](https://github.com/teammate-username)
-
----
-
-## 🗓️ Timeline
-
-* **Day 1** — Dataset exploration, leakage-safe split, preprocessing, frozen baseline.
-* **Day 2** — Fine-tuning experiments, final model selection, evaluation, error analysis.
+* [Hussein Abuammar](https://www.linkedin.com/in/hussein-abuammar/)
 
 ---
 
-## 🙋 Personal situation
+## 7. Timeline
 
-*(Short note on your background going into the challenge and any constraints you worked under.)*
+* **Day 1** — Dataset exploration.
+* **Day 2** — Leakage-safe split, preprocessing.
+* **Day 3** — Frozen baseline training, fine-tuning experiments, final model selection.
+* **Day 4** — Evaluation, error analysis.
+* **Day 5** — Documentation.
+
+---
+
+## 8. Personal situation
+
+This project was completed as a 5-day consolidation challenge, worked on solo. The original challenge brief was adapted to a different domain, which meant designing the dataset split, preprocessing pipeline, and evaluation methodology from scratch within a tight timeframe, rather than following a fixed template.
+
+This challenge was great experience for me in working with computer vision and medical images. My main constraint, however, was class imbalance, which affected the final malignant recall (0.6016).
