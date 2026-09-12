@@ -72,7 +72,8 @@ CV_Histopath_Cancer_Diagnosis/
 │
 ├── .gitignore                     # Excludes caches, envs, raw data, and other local-only files
 ├── README.md                      # Project documentation
-└── requirements.txt                # Python package dependencies
+├── RESULTS.md                     # Results & Analysis
+└── requirements.txt               # Python package dependencies
 ```
 
 ---
